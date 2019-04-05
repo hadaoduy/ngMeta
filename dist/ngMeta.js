@@ -69,10 +69,24 @@
 
         var setDescription = function (description) {
           if (!$rootScope.ngMeta) {
-            throw new Error('Cannot call setTitle when ngMeta is undefined. Did you forget to call ngMeta.init() in the run block? \nRefer: https://github.com/vinaygopinath/ngMeta#getting-started');
+            throw new Error('Cannot call setDescription when ngMeta is undefined. Did you forget to call ngMeta.init() in the run block? \nRefer: https://github.com/vinaygopinath/ngMeta#getting-started');
           }
 
           $rootScope.ngMeta.description = angular.isDefined(description) ? description : (defaults.description || '');
+
+          return this;
+        };
+
+        var setFacebook = function (title, description, image, url, type) {
+          if (!$rootScope.ngMeta) {
+            throw new Error('Cannot call setFacebook when ngMeta is undefined. Did you forget to call ngMeta.init() in the run block? \nRefer: https://github.com/vinaygopinath/ngMeta#getting-started');
+          }
+
+          $rootScope.ngMeta['og:title'] = angular.isDefined(title) ? title : (defaults.title || '');
+          $rootScope.ngMeta['og:description'] = angular.isDefined(description) ? description : (defaults.description || '');;
+          $rootScope.ngMeta['og:image'] = angular.isDefined(image) ? image : (defaults.image || '');;
+          $rootScope.ngMeta['og:url'] = angular.isDefined(url) ? url : (defaults.url || '');;
+          $rootScope.ngMeta['og:type'] = angular.isDefined(type) ? type : (defaults.type || '');;
 
           return this;
         };
@@ -155,6 +169,7 @@
 
           setTitle(meta.title, meta.titleSuffix);
           setDescription(meta.description);
+          setFacebook(meta['og:title'], meta['og:description'], meta['og:image'], meta['og:url'], meta['og:type']);
 
           var def = angular.copy(defaults);
 
@@ -255,6 +270,16 @@
 
       this.setDefaultDescription = function (descriptionStr) {
         defaults.description = descriptionStr;
+        return this;
+      };
+
+      this.setDefaultFacebook = function (title, description, image, url, type) {
+        defaults['og:title'] = title;
+        defaults['og:description'] = description;
+        defaults['og:image'] = image;
+        defaults['og:url'] = url;
+        defaults['og:type'] = type;
+
         return this;
       };
 
