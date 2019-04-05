@@ -1,4 +1,4 @@
-(function(root, factory) {
+(function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
     define(['angular'], factory);
@@ -11,7 +11,7 @@
     // Browser globals (root is window)
     root.returnExports = factory(root.angular);
   }
-}(this, function(angular) {
+}(this, function (angular) {
   /**
    * @ngdoc service
    * @name ngMeta.ngMeta
@@ -20,7 +20,7 @@
    * that supports setting arbitrary meta tags
    */
   return angular.module('ngMeta', [])
-    .provider('ngMeta', function() {
+    .provider('ngMeta', function () {
 
       'use strict';
 
@@ -55,7 +55,7 @@
          *
          * @returns {Object} self
          */
-        var setTitle = function(title, titleSuffix) {
+        var setTitle = function (title, titleSuffix) {
           if (!$rootScope.ngMeta) {
             throw new Error('Cannot call setTitle when ngMeta is undefined. Did you forget to call ngMeta.init() in the run block? \nRefer: https://github.com/vinaygopinath/ngMeta#getting-started');
           }
@@ -64,6 +64,16 @@
           if (config.useTitleSuffix) {
             $rootScope.ngMeta.title += angular.isDefined(titleSuffix) ? titleSuffix : (defaults.titleSuffix || '');
           }
+          return this;
+        };
+
+        var setDescription = function (description) {
+          if (!$rootScope.ngMeta) {
+            throw new Error('Cannot call setTitle when ngMeta is undefined. Did you forget to call ngMeta.init() in the run block? \nRefer: https://github.com/vinaygopinath/ngMeta#getting-started');
+          }
+
+          $rootScope.ngMeta.description = angular.isDefined(description) ? description : (defaults.description || '');
+
           return this;
         };
 
@@ -80,7 +90,7 @@
          *
          * @returns {Object} self
          */
-        var setTag = function(tag, value) {
+        var setTag = function (tag, value) {
           if (!$rootScope.ngMeta) {
             throw new Error('Cannot call setTag when ngMeta is undefined. Did you forget to call ngMeta.init() in the run block? \nRefer: https://github.com/vinaygopinath/ngMeta#getting-started');
           }
@@ -104,7 +114,7 @@
          *
          * @returns {Object} self
          */
-        var setDefaultTag = function(tag, value) {
+        var setDefaultTag = function (tag, value) {
           if (!$rootScope.ngMeta) {
             throw new Error('Cannot call setDefaultTag when ngMeta is undefined. Did you forget to call ngMeta.init() in the run block? \nRefer: https://github.com/vinaygopinath/ngMeta#getting-started');
           }
@@ -136,7 +146,7 @@
          *
          * @returns void
          */
-        var readRouteMeta = function(meta) {
+        var readRouteMeta = function (meta) {
           meta = meta || {};
 
           if (meta.disableUpdate) {
@@ -144,6 +154,7 @@
           }
 
           setTitle(meta.title, meta.titleSuffix);
+          setDescription(meta.description);
 
           var def = angular.copy(defaults);
 
@@ -166,7 +177,7 @@
           }
         };
 
-        var update = function(event, current) {
+        var update = function (event, current) {
           readRouteMeta(angular.copy(current.meta || (current.data && current.data.meta)));
         };
 
@@ -179,7 +190,7 @@
          *
          * @returns {Object} self
          */
-        var resetMeta = function() {
+        var resetMeta = function () {
           readRouteMeta();
 
           return this;
@@ -201,13 +212,13 @@
          *   ngMeta.init();
          * });
          */
-        var init = function() {
+        var init = function () {
           $rootScope.ngMeta = {};
           $rootScope.$on('$routeChangeSuccess', update);
           $rootScope.$on('$stateChangeSuccess', update);
           if ($injector.has('$transitions')) {
             var $transitions = $injector.get('$transitions');
-            $transitions.onSuccess({}, function(transition) {
+            $transitions.onSuccess({}, function (transition) {
               update(null, transition.$to());
             });
           }
@@ -218,7 +229,7 @@
           'setTitle': setTitle,
           'setTag': setTag,
           'setDefaultTag': setDefaultTag,
-          'resetMeta' : resetMeta
+          'resetMeta': resetMeta
         };
       }
 
@@ -237,8 +248,13 @@
        *
        * @returns {Object} self
        */
-      this.setDefaultTitle = function(titleStr) {
+      this.setDefaultTitle = function (titleStr) {
         defaults.title = titleStr;
+        return this;
+      };
+
+      this.setDefaultDescription = function (descriptionStr) {
+        defaults.description = descriptionStr;
         return this;
       };
 
@@ -255,7 +271,7 @@
        *
        * @returns {Object} self
        */
-      this.setDefaultTitleSuffix = function(titleSuffix) {
+      this.setDefaultTitleSuffix = function (titleSuffix) {
         defaults.titleSuffix = titleSuffix;
         return this;
       };
@@ -275,7 +291,7 @@
        *
        * @returns {Object} self
        */
-      this.setDefaultTag = function(tag, value) {
+      this.setDefaultTag = function (tag, value) {
         defaults[tag] = value;
         return this;
       };
@@ -293,7 +309,7 @@
        *
        * @returns {Object} self
        */
-      this.useTitleSuffix = function(bool) {
+      this.useTitleSuffix = function (bool) {
         config.useTitleSuffix = !!bool;
         return this;
       };
@@ -310,8 +326,8 @@
        *
        * @returns {Object} data
        */
-      this.mergeNestedStateData = function(state, parentDecoratorFn) {
-      // original data
+      this.mergeNestedStateData = function (state, parentDecoratorFn) {
+        // original data
         var originalData = parentDecoratorFn(state) || {};
 
         // create new merged meta
@@ -327,7 +343,7 @@
       };
 
 
-      this.$get = ["$rootScope", "$injector", function($rootScope, $injector) {
+      this.$get = ["$rootScope", "$injector", function ($rootScope, $injector) {
         return new Meta($rootScope, $injector);
       }];
     });
